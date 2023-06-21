@@ -10,6 +10,7 @@
  */
 
 import type { ApiFromModules } from "convex/server";
+import type * as generate from "../generate";
 import type * as sketches from "../sketches";
 
 /**
@@ -21,5 +22,6 @@ import type * as sketches from "../sketches";
  * ```
  */
 export declare const api: ApiFromModules<{
+  generate: typeof generate;
   sketches: typeof sketches;
 }>;

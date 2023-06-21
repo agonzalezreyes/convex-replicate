@@ -1,18 +1,43 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalAction, internalMutation } from "./_generated/server";
+import { api } from "./_generated/api";
+import Replicate from "replicate";
+import { Id } from "./_generated/dataModel";
 
 export const saveSketch = mutation(
-    async ({db}, {prompt}: {prompt:string}) => {
+    async ({db, scheduler}, {prompt, image}: {prompt:string; image:string}) => {
         console.log('saveSketch', prompt);
 
-        await db.insert('sketches', {
+        const sketch = await db.insert('sketches', {
             prompt,
         });
 
-        return {
-            message: 'Saved sketch'
-        }
+        // schedule a job to generate the image
+        await scheduler.runAfter(0, api.generate.generate, {
+            sketchId: sketch,
+            prompt,
+            image,
+            })
+
+        return sketch;
     }
 );
+
+export const getSketch = query(({db}, {sketchId}: {sketchId: Id<string>}) => {
+    if (!sketchId) {
+        return null;
+    }
+    return db.get(sketchId);
+});
+
+export const updateSketchResult = internalMutation(
+    async (
+        {db}, 
+        {sketchId, result}: {sketchId: Id<string>, result: string}
+    ) => {
+        await db.patch(sketchId, {
+            result,
+        });
+});
 
 export const getSketches = query(
     async ({db}) => {
