@@ -1,0 +1,15 @@
+"use client";
+import Link from 'next/link'
+
+export function Navbar() {
+    return <div className='border-b py-4'>
+        <div className="container mx-auto flex justify-between">
+        <div>LOGO</div>
+        <div className='flex gap-4'>
+            <Link href='/'>Generate</Link>
+            <Link href='/collection'>Collection</Link>
+        </div>
+        <div>Sign In</div>
+        </div>
+    </div>
+}

@@ -2,9 +2,16 @@ import { mutation, query, internalAction, internalMutation } from "./_generated/
 import { api } from "./_generated/api";
 import Replicate from "replicate";
 import { Id } from "./_generated/dataModel";
+import { v } from "convex/values";
 
 export const saveSketch = mutation(
-    async ({db, scheduler}, {prompt, image}: {prompt:string; image:string}) => {
+    {
+    args: {
+        prompt: v.string(),
+        image: v.string(),
+    },
+    
+    handler: async ({db, scheduler}, {prompt, image}) => {
         console.log('saveSketch', prompt);
 
         const sketch = await db.insert('sketches', {
@@ -19,8 +26,8 @@ export const saveSketch = mutation(
             })
 
         return sketch;
-    }
-);
+        },
+});
 
 export const getSketch = query(({db}, {sketchId}: {sketchId: Id<string>}) => {
     if (!sketchId) {
